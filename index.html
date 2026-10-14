@@ -1,1 +1,140 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101014">
+  <title>Nova AI</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: #101014; color: #f4f4f5;
+      font-family: system-ui, sans-serif; min-height: 100vh;
+    }
+    header {
+      padding: 17px; border-bottom: 1px solid #303039;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .logo {
+      background: #8b5cf6; border-radius: 12px; padding: 9px;
+      font-weight: 800; color: white;
+    }
+    header small { color: #a1a1aa; }
+    main {
+      max-width: 760px; margin: auto; padding: 24px 16px 150px;
+    }
+    h1 { font-size: 28px; margin-top: 45px; }
+    .muted { color: #a1a1aa; line-height: 1.6; }
+    .tools {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px; margin-top: 24px;
+    }
+    .tool {
+      background: #1c1c24; border: 1px solid #343440;
+      padding: 15px; border-radius: 14px; color: white;
+      text-align: left; cursor: pointer; font-size: 14px;
+    }
+    .tool span { display: block; margin-top: 7px; color: #a1a1aa; }
+    #messages { margin-top: 28px; }
+    .message {
+      white-space: pre-wrap; overflow-wrap: anywhere;
+      padding: 14px; border-radius: 14px; margin: 12px 0;
+      line-height: 1.6;
+    }
+    .user { background: #30254b; margin-left: 24px; }
+    .assistant { background: #1c1c24; margin-right: 12px; }
+    .composer {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 12px; background: #101014;
+      border-top: 1px solid #303039;
+    }
+    .form {
+      max-width: 760px; margin: auto; display: flex;
+      gap: 8px; background: #1c1c24; padding: 8px;
+      border: 1px solid #41414d; border-radius: 16px;
+    }
+    textarea {
+      flex: 1; min-width: 0; resize: vertical; min-height: 45px;
+      max-height: 130px; border: 0; outline: 0;
+      background: transparent; color: white; padding: 12px;
+      font: inherit;
+    }
+    button.send {
+      background: #8b5cf6; color: white; border: 0;
+      border-radius: 12px; padding: 0 16px; cursor: pointer;
+    }
+    .note { text-align: center; color: #71717a; font-size: 11px; }
+    input[type=file] { display: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">N</div>
+    <div><strong>Nova AI</strong><br><small>Tu asistente inteligente</small></div>
+  </header>
+
+  <main>
+    <h1>¿En qué puedo ayudarte?</h1>
+    <p class="muted">Escribí una tarea, programá un proyecto o analizá tus documentos.</p>
+
+    <div class="tools">
+      <button class="tool" data-prompt="Ayudame a programar un proyecto y explicame el código.">⌘ Programación<span>Crear y corregir código</span></button>
+      <button class="tool" data-prompt="Ayudame a investigar este tema: ">⌕ Investigación<span>Investigar temas</span></button>
+      <button class="tool" id="fileButton">▤ Archivos<span>Seleccionar un documento</span></button>
+      <button class="tool" data-prompt="Ayudame a crear una idea para generar una imagen.">▧ Imágenes<span>Ideas y prompts visuales</span></button>
+    </div>
+
+    <input id="fileInput" type="file" accept=".txt,.md,.pdf,.csv,.json,.html,.js,.py,.docx">
+
+    <div id="messages" aria-live="polite"></div>
+  </main>
+
+  <div class="composer">
+    <form class="form" id="chatForm">
+      <textarea id="prompt" placeholder="Preguntale algo a Nova..." required></textarea>
+      <button class="send" type="submit">Enviar</button>
+    </form>
+    <p class="note">Nova AI · Las respuestas inteligentes se conectarán en el próximo paso.</p>
+  </div>
+
+  <script>
+    const promptBox = document.getElementById("prompt");
+    const messages = document.getElementById("messages");
+
+    function addMessage(text, role) {
+      const div = document.createElement("div");
+      div.className = "message " + role;
+      div.textContent = text;
+      messages.appendChild(div);
+      div.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    document.getElementById("chatForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const text = promptBox.value.trim();
+      if (!text) return;
+      addMessage(text, "user");
+      addMessage("La interfaz de Nova funciona correctamente. En el siguiente paso conectaremos un modelo de IA real para generar respuestas.", "assistant");
+      promptBox.value = "";
+    });
+
+    document.querySelectorAll("[data-prompt]").forEach(button => {
+      button.addEventListener("click", () => {
+        promptBox.value = button.dataset.prompt;
+        promptBox.focus();
+      });
+    });
+
+    document.getElementById("fileButton").addEventListener("click", () => {
+      document.getElementById("fileInput").click();
+    });
+
+    document.getElementById("fileInput").addEventListener("change", event => {
+      const file = event.target.files[0];
+      if (file) addMessage("Archivo seleccionado: " + file.name + ". La lectura y el análisis se implementarán en una próxima etapa.", "assistant");
+    });
+  </script>
+</body>
+  </html>
+
